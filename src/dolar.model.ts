@@ -1,13 +1,18 @@
 export type DolarResponseI = {
-  oficial: Object;
-  blue: DolarBlueI;
-  oficial_euro: Object;
-  blue_euro: Object;
+  oficial: DolarI;
+  blue: DolarI;
+  oficial_euro: DolarI;
+  blue_euro: DolarI;
   last_update: Date;
 };
 
-export type DolarBlueI = {
+export type DolarI = {
   value_avg: number;
   value_sell: number;
   value_buy: number;
+};
+
+export type DolarTwitI = {
+  dolarType: string;
+  dolarValue: number;
 };

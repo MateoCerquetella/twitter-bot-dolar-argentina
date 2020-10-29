@@ -2,7 +2,7 @@ import Twit from 'twit';
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 import schedule from 'node-schedule';
-import { DolarResponseI } from "./dolar.model";
+import { DolarResponseI, DolarTwitI } from "./dolar.model";
 dotenv.config();
 
 const Twitter = new Twit({
@@ -13,7 +13,7 @@ const Twitter = new Twit({
 });
 
 (function main(): void {
-  postTweet();
+  postTweets();
 }());
 
 async function api<T>(url: string): Promise<T> {
@@ -24,29 +24,44 @@ async function api<T>(url: string): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-async function getDolar(): Promise<number | void> {
+async function getDolar(): Promise<Array<DolarTwitI> | void> {
   try {
     const res = await api<DolarResponseI>('https://api.bluelytics.com.ar/v2/latest');
-    return Math.ceil(res.blue.value_avg);
+    return [{
+      dolarType: 'blue',
+      dolarValue: Math.ceil(res.blue.value_sell)
+    },
+    {
+      dolarType: 'oficial',
+      dolarValue: Math.ceil(res.oficial.value_sell)
+    }];
   } catch (error) {
     console.log(error);
   }
 }
 
-function postTweet() {
-  const DOLAR_BLUE_RULE = getScheduleRule(
+function postTweets() {
+  const DOLAR_RULE = getScheduleRule(
     {
       days: [new schedule.Range(1, 5)],
-      hours: [9, 15, 22],
-      minute: 0
+      hours: [9, 15, 22, 1],
+      minute: 12
     });
-  schedule.scheduleJob(DOLAR_BLUE_RULE!, async function () {
-    const DOLAR_BLUE_PRICE = await getDolar();
-    if (!DOLAR_BLUE_PRICE) return;
-    const DOLAR = getRandomText('blue', DOLAR_BLUE_PRICE);
-    Twitter.post('statuses/update', { status: DOLAR }, function () {
-      console.log(`Twitted dolar blue on $${DOLAR_BLUE_PRICE} ${getNow()}`);
+
+  schedule.scheduleJob(DOLAR_RULE!, async function () {
+    const DOLAR_ARRAY = await getDolar();
+    if (!DOLAR_ARRAY) return;
+
+    DOLAR_ARRAY.forEach(dolar => {
+      const DOLAR_LABEL = getRandomText(dolar.dolarType, dolar.dolarValue);
+      postToTwitter(DOLAR_LABEL, dolar.dolarValue);
     });
+  });
+}
+
+function postToTwitter(dolarLabel: string, dolarPrice: number) {
+  Twitter.post('statuses/update', { status: dolarLabel }, function () {
+    console.log(`Twitted dolar blue on $${dolarPrice} ${getNow()}`);
   });
 }
 
@@ -57,7 +72,8 @@ function getScheduleRule(
     hours,
     minute
   }: {
-    day?: number; days?: [schedule.Range];
+    day?: number;
+    days?: [schedule.Range];
     hour?: number;
     hours?: Array<number>;
     minute: number;
@@ -65,7 +81,6 @@ function getScheduleRule(
   const rule = new schedule.RecurrenceRule();
   if (day && days === undefined) return null;
   if (hour && hours === undefined) return null;
-
   rule.dayOfWeek = day! || days!;
   rule.hour = hour! || hours!;
   rule.minute = minute;
