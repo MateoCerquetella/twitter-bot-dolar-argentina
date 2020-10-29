@@ -1,7 +1,7 @@
 import Twit from 'twit';
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
-import schedule from 'node-schedule';
+// import schedule from 'node-schedule';
 import { DolarResponseI } from "./dolar.model";
 dotenv.config();
 
@@ -12,12 +12,12 @@ const Twitter = new Twit({
   access_token_secret: process.env.ACCESS_TOKEN_SECRET,
 });
 
-(async function main() {
-  const DOLAR_PRICE = getDolar();
-  const DOLAR = (DOLAR_PRICE) ? getRandomText('blue', DOLAR_PRICE) : null;
-  if (!DOLAR) return;
-  Twitter.post('statuses/update', { status: DOLAR! }, function () {
-    console.log(`Twitted dolar blue on $${DOLAR_PRICE} ${getNow()}`);
+(async function main(): Promise<void> {
+  const DOLAR_BLUE_PRICE = await getDolar();
+  if (!DOLAR_BLUE_PRICE) return;
+  const DOLAR = getRandomText('blue', DOLAR_BLUE_PRICE);
+  Twitter.post('statuses/update', { status: DOLAR }, function () {
+    console.log(`Twitted dolar blue on $${DOLAR_BLUE_PRICE} ${getNow()}`);
   });
 }());
 
@@ -29,28 +29,40 @@ async function api<T>(url: string): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-function getDolar(): number | null {
-  let DOLAR = null;
-  api<DolarResponseI>('https://api.bluelytics.com.ar/v2/latest')
-    .then(res => {
-      DOLAR = Math.ceil(res.blue.value_avg);
-    })
-    .catch(error => {
-      console.log(error);
-    });
-  return DOLAR;
+async function getDolar(): Promise<number | void> {
+  try {
+    const res = await api<DolarResponseI>('https://api.bluelytics.com.ar/v2/latest');
+    return Math.ceil(res.blue.value_avg);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
-function getSchedule(
-  day: number,
-  days: [schedule.Range],
-  hour: number,
-  minute: number) {
-  const rule = new schedule.RecurrenceRule();
-  rule.dayOfWeek = day || days;
-  rule.hour = hour;
-  rule.minute = minute;
-}
+// function getSchedule(
+//   day: number,
+//   days: [schedule.Range],
+//   hour: number,
+//   minute: number) {
+//   const rule = new schedule.RecurrenceRule();
+//   rule.dayOfWeek = day || days;
+//   rule.hour = hour;
+//   rule.minute = minute;
+
+//   // const rule = new schedule.RecurrenceRule();
+//   // rule.dayOfWeek = [new schedule.Range(1, 5)];
+//   // rule.hour = [9, 15, 22];
+//   // rule.minute = 0;
+
+//   // //Regla de twiteo de la imagen
+//   // var rule2 = new schedule.RecurrenceRule();
+//   // rule2.dayOfWeek = 5; //Viernes
+//   // rule2.hour = 22;
+//   // rule2.minute = 1;
+
+//   // Initialise:
+//   // schedule.scheduleJob(rule, twit);
+//   // schedule.scheduleJob(rule2, twitImage);}
+// }
 
 function getRandomText(dolarType: string, dolarPrice: number): string {
   const DOLAR_LABEL = [
