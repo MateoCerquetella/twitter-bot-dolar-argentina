@@ -1,7 +1,7 @@
 import Twit from 'twit';
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
-// import schedule from 'node-schedule';
+import schedule from 'node-schedule';
 import { DolarResponseI } from "./dolar.model";
 dotenv.config();
 
@@ -12,13 +12,8 @@ const Twitter = new Twit({
   access_token_secret: process.env.ACCESS_TOKEN_SECRET,
 });
 
-(async function main(): Promise<void> {
-  const DOLAR_BLUE_PRICE = await getDolar();
-  if (!DOLAR_BLUE_PRICE) return;
-  const DOLAR = getRandomText('blue', DOLAR_BLUE_PRICE);
-  Twitter.post('statuses/update', { status: DOLAR }, function () {
-    console.log(`Twitted dolar blue on $${DOLAR_BLUE_PRICE} ${getNow()}`);
-  });
+(function main(): void {
+  postTweet();
 }());
 
 async function api<T>(url: string): Promise<T> {
@@ -38,31 +33,44 @@ async function getDolar(): Promise<number | void> {
   }
 }
 
-// function getSchedule(
-//   day: number,
-//   days: [schedule.Range],
-//   hour: number,
-//   minute: number) {
-//   const rule = new schedule.RecurrenceRule();
-//   rule.dayOfWeek = day || days;
-//   rule.hour = hour;
-//   rule.minute = minute;
+function postTweet() {
+  const DOLAR_BLUE_RULE = getScheduleRule(
+    {
+      days: [new schedule.Range(1, 5)],
+      hours: [9, 15, 22],
+      minute: 0
+    });
+  schedule.scheduleJob(DOLAR_BLUE_RULE!, async function () {
+    const DOLAR_BLUE_PRICE = await getDolar();
+    if (!DOLAR_BLUE_PRICE) return;
+    const DOLAR = getRandomText('blue', DOLAR_BLUE_PRICE);
+    Twitter.post('statuses/update', { status: DOLAR }, function () {
+      console.log(`Twitted dolar blue on $${DOLAR_BLUE_PRICE} ${getNow()}`);
+    });
+  });
+}
 
-//   // const rule = new schedule.RecurrenceRule();
-//   // rule.dayOfWeek = [new schedule.Range(1, 5)];
-//   // rule.hour = [9, 15, 22];
-//   // rule.minute = 0;
+function getScheduleRule(
+  { day,
+    days,
+    hour,
+    hours,
+    minute
+  }: {
+    day?: number; days?: [schedule.Range];
+    hour?: number;
+    hours?: Array<number>;
+    minute: number;
+  }): schedule.RecurrenceRule | null {
+  const rule = new schedule.RecurrenceRule();
+  if (day && days === undefined) return null;
+  if (hour && hours === undefined) return null;
 
-//   // //Regla de twiteo de la imagen
-//   // var rule2 = new schedule.RecurrenceRule();
-//   // rule2.dayOfWeek = 5; //Viernes
-//   // rule2.hour = 22;
-//   // rule2.minute = 1;
-
-//   // Initialise:
-//   // schedule.scheduleJob(rule, twit);
-//   // schedule.scheduleJob(rule2, twitImage);}
-// }
+  rule.dayOfWeek = day! || days!;
+  rule.hour = hour! || hours!;
+  rule.minute = minute;
+  return rule;
+}
 
 function getRandomText(dolarType: string, dolarPrice: number): string {
   const DOLAR_LABEL = [
