@@ -1,15 +1,25 @@
 import Twit from 'twit';
 import fetch from 'node-fetch';
-import { DolarResponseI } from "./dolar.model";
 import dotenv from 'dotenv';
+import schedule from 'node-schedule';
+import { DolarResponseI } from "./dolar.model";
 dotenv.config();
 
-const T = new Twit({
+const Twitter = new Twit({
   consumer_key: process.env.CONSUMER_KEY!,
   consumer_secret: process.env.CONSUMER_SECRET!,
   access_token: process.env.ACCESS_TOKEN,
   access_token_secret: process.env.ACCESS_TOKEN_SECRET,
 });
+
+(async function main() {
+  const DOLAR_PRICE = getDolar();
+  const DOLAR = (DOLAR_PRICE) ? getRandomText('blue', DOLAR_PRICE) : null;
+  if (!DOLAR) return;
+  Twitter.post('statuses/update', { status: DOLAR! }, function () {
+    console.log(`Twitted dolar blue on $${DOLAR_PRICE} ${getNow()}`);
+  });
+}());
 
 async function api<T>(url: string): Promise<T> {
   const response = await fetch(url);
@@ -19,21 +29,30 @@ async function api<T>(url: string): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-(async function () {
+function getDolar(): number | null {
+  let DOLAR = null;
   api<DolarResponseI>('https://api.bluelytics.com.ar/v2/latest')
     .then(res => {
-      const DOLAR_PRICE = Math.ceil(res.blue.value_avg);
-      const DOLAR = randomText('blue', DOLAR_PRICE);
-      T.post('statuses/update', { status: DOLAR }, function () {
-        console.log(`Twitted dolar blue on $${DOLAR_PRICE} ${getNow()}`);
-      });
+      DOLAR = Math.ceil(res.blue.value_avg);
     })
     .catch(error => {
       console.log(error);
     });
-}());
+  return DOLAR;
+}
 
-const randomText = ((dolarType: string, dolarPrice: number): string => {
+function getSchedule(
+  day: number,
+  days: [schedule.Range],
+  hour: number,
+  minute: number) {
+  const rule = new schedule.RecurrenceRule();
+  rule.dayOfWeek = day || days;
+  rule.hour = hour;
+  rule.minute = minute;
+}
+
+function getRandomText(dolarType: string, dolarPrice: number): string {
   const DOLAR_LABEL = [
     'Un dolar ' + dolarType + ' en este momento son $' + dolarPrice + ' ARS',
     'Hoy, un dolar ' + dolarType + ' está $' + dolarPrice + ' ARS',
@@ -52,11 +71,11 @@ const randomText = ((dolarType: string, dolarPrice: number): string => {
     'El dolar ' + dolarType + ' equivale $' + dolarPrice + ' ARS',
   ];
   return DOLAR_LABEL[Math.floor(Math.random() * DOLAR_LABEL.length)];
-});
+};
 
-const getNow = ((): string => {
+function getNow(): string {
   const today = new Date();
   const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
   const time = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
   return date + ' ' + time;
-});
+};
