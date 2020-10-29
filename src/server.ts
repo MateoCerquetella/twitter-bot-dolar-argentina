@@ -43,12 +43,9 @@ async function getDolar(): Promise<Array<DolarTwitI> | void> {
 function postTweets() {
   const DOLAR_RULE = getScheduleRule(
     {
-      // days: [new schedule.Range(1, 5)],
-      // hours: [10, 15, 22],
-      // minute: 30
       days: [new schedule.Range(1, 5)],
-      hours: [1],
-      minute: 26
+      hours: [10, 15, 22],
+      minute: 30
     });
 
   schedule.scheduleJob(DOLAR_RULE!, async function () {
