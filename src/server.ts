@@ -32,8 +32,8 @@ async function getDolar(): Promise<Array<DolarTwitI> | void> {
       dolarValue: Math.ceil(res.blue.value_sell)
     },
     {
-      dolarType: 'oficial',
-      dolarValue: Math.ceil(res.oficial.value_sell)
+      dolarType: 'solidario',
+      dolarValue: +(res.oficial.value_sell * 1.65).toFixed(2)
     }];
   } catch (error) {
     console.log(error);
@@ -43,9 +43,12 @@ async function getDolar(): Promise<Array<DolarTwitI> | void> {
 function postTweets() {
   const DOLAR_RULE = getScheduleRule(
     {
+      // days: [new schedule.Range(1, 5)],
+      // hours: [10, 15, 22],
+      // minute: 30
       days: [new schedule.Range(1, 5)],
-      hours: [9, 15, 22, 1],
-      minute: 12
+      hours: [1],
+      minute: 26
     });
 
   schedule.scheduleJob(DOLAR_RULE!, async function () {
