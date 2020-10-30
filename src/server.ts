@@ -2,6 +2,7 @@ import Twit from 'twit';
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 import schedule from 'node-schedule';
+import process from 'process';
 import { DolarResponseI, DolarTwitI } from "./dolar.model";
 dotenv.config();
 
@@ -13,6 +14,8 @@ const Twitter = new Twit({
 });
 
 (function main(): void {
+  process.title = 'node-twitter-bot';
+  console.log(`Started ${process.title} with PID ${process.pid}`);
   postTweets();
 }());
 
