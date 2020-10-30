@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/server.ts",
   "scripts": {
-    "prod": "node dist/server.js",
+    "prod": "pm2 start dist/server.js",
+    "node": "node dist/server.js",
     "build": "tsc --project ./",
     "dev": "ts-node src/server.ts"
   },
