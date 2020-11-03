@@ -48,7 +48,7 @@ async function schedulerJob(): Promise<void> {
     {
       days: [new schedule.Range(1, 5)],
       hours: [10, 14, 19],
-      minute: 49
+      minute: 30
     });
 
   schedule.scheduleJob(DOLAR_RULE!, async function getDolarAndPost(): Promise<void> {
