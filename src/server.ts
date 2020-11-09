@@ -1,9 +1,10 @@
-import Twit from 'twit';
+import Twit, { Status, Welcome } from 'twit';
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 import schedule from 'node-schedule';
 import process from 'process';
-import { DolarResponseI, DolarTwitI } from "./dolar.model";
+import { DolarResponseI, DolarTwitI } from "./model/dolar.model";
+import { User } from './model/twit.extend';
 dotenv.config();
 
 const Twitter = new Twit({
@@ -17,6 +18,7 @@ const Twitter = new Twit({
   process.title = 'node-twitter-bot';
   console.log(`Started ${process.title} with PID ${process.pid}`);
   schedulerJob();
+  getTweetsByLocation();
 }());
 
 async function api<T>(url: string): Promise<T> {
@@ -44,12 +46,11 @@ async function getApiDolar(): Promise<Array<DolarTwitI> | void> {
 }
 
 async function schedulerJob(): Promise<void> {
-  const DOLAR_RULE = getScheduleRule(
-    {
-      days: [new schedule.Range(1, 5)],
-      hours: [10, 14, 19],
-      minute: 30
-    });
+  const DOLAR_RULE = getScheduleRule({
+    days: [new schedule.Range(1, 5)],
+    hours: [10, 14, 19],
+    minute: 30
+  });
 
   schedule.scheduleJob(DOLAR_RULE!, async function getDolarAndPost(): Promise<void> {
     const DOLAR_ARRAY = await getApiDolar();
@@ -67,6 +68,21 @@ function postToTwitter(dolarLabel: string, dolarType: string, dolarPrice: number
     console.log(`Twitted dolar ${dolarType}
                 price: $${dolarPrice}
                 date: ${getNow()}`);
+  });
+}
+
+function getTweetsByLocation(): void {
+  var buenosAires = '-34.603722,-58.381592,1000km';
+
+  Twitter.get('search/tweets', { q: 'dolar', geocode: buenosAires, count: 10 }, function (err, data: object, response) {
+    const twitterData: Welcome = data as Welcome; // Cast Object to Welcome model
+    const twitterStatuses: Status[] = twitterData.statuses; // Cast Welcome.statuses to Status[] model
+
+    twitterStatuses.forEach(twit => {
+      const user = twit.user as unknown as User;
+      if (user.location.includes('Argentina'))
+        console.log(twit.text + ' - ' + user.name);
+    });
   });
 }
 
