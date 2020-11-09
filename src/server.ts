@@ -68,18 +68,19 @@ function getUsersIdBySearch(): Array<number> | null {
   const BUENOS_AIRES_GEO = '-34.603722,-58.381592,1000km';
   const QUERY = 'dolar';
   const MAX_TWEETS = 10;
-  let users_id: Array<number> = [];
-
+  let users_id: Array<number> | null = null;
   Twitter.get('search/tweets', { q: QUERY, geocode: BUENOS_AIRES_GEO, count: MAX_TWEETS }, function (data: object) {
-    const twitterData: Welcome = data as Welcome; // Cast Object to Welcome model
-    const twitterStatuses: Status[] = twitterData.statuses; // Cast Welcome.statuses to Status[] model
+    const twitterData: Welcome | null = data as Welcome; // Cast Object to Welcome or null model
 
-    users_id = twitterStatuses.map(twit => {
-      const user = twit.user as unknown as User;
-      return user.id;
-    });
+    if (twitterData) {
+      const twitterStatuses: Status[] = twitterData.statuses; // Cast Welcome.statuses to Status[] model
+      return users_id = twitterStatuses.map(twit => {
+        const user = twit.user as unknown as User;
+        return user.id;
+      });
+    } else {
+      return;
+    }
   });
-  console.log(users_id);
-
   return users_id;
 }
