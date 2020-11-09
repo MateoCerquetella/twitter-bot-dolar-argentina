@@ -1,10 +1,10 @@
-import Twit, { Status, Welcome } from 'twit';
-import fetch from 'node-fetch';
+import Twit from 'twit';
 import dotenv from 'dotenv';
 import schedule from 'node-schedule';
 import process from 'process';
 import { DolarResponseI, DolarTwitI } from "./model/dolar.model";
-import { User } from './model/twit.extend';
+import { Status, User, Welcome } from './model/twit.extend';
+import { api, getNow, getRandomText, getScheduleRule } from './helpers/helpers';
 dotenv.config();
 
 const Twitter = new Twit({
@@ -18,20 +18,13 @@ const Twitter = new Twit({
   process.title = 'node-twitter-bot';
   console.log(`Started ${process.title} with PID ${process.pid}`);
   schedulerJob();
-  getTweetsByLocation();
+  getUsersIdBySearch();
 }());
-
-async function api<T>(url: string): Promise<T> {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(response.statusText);
-  }
-  return response.json() as Promise<T>;
-}
 
 async function getApiDolar(): Promise<Array<DolarTwitI> | void> {
   try {
-    const res = await api<DolarResponseI>('https://api.bluelytics.com.ar/v2/latest');
+    const URL = 'https://api.bluelytics.com.ar/v2/latest';
+    const res = await api<DolarResponseI>(URL);
     return [{
       dolarType: 'blue',
       dolarValue: Math.ceil(res.blue.value_sell)
@@ -71,63 +64,22 @@ function postToTwitter(dolarLabel: string, dolarType: string, dolarPrice: number
   });
 }
 
-function getTweetsByLocation(): void {
-  var buenosAires = '-34.603722,-58.381592,1000km';
+function getUsersIdBySearch(): Array<number> | null {
+  const BUENOS_AIRES_GEO = '-34.603722,-58.381592,1000km';
+  const QUERY = 'dolar';
+  const MAX_TWEETS = 10;
+  let users_id: Array<number> = [];
 
-  Twitter.get('search/tweets', { q: 'dolar', geocode: buenosAires, count: 10 }, function (err, data: object, response) {
+  Twitter.get('search/tweets', { q: QUERY, geocode: BUENOS_AIRES_GEO, count: MAX_TWEETS }, function (data: object) {
     const twitterData: Welcome = data as Welcome; // Cast Object to Welcome model
     const twitterStatuses: Status[] = twitterData.statuses; // Cast Welcome.statuses to Status[] model
 
-    twitterStatuses.forEach(twit => {
+    users_id = twitterStatuses.map(twit => {
       const user = twit.user as unknown as User;
-      if (user.location.includes('Argentina'))
-        console.log(twit.text + ' - ' + user.name);
+      return user.id;
     });
   });
+  console.log(users_id);
+
+  return users_id;
 }
-
-function getScheduleRule(
-  { days,
-    hours,
-    minute
-  }: {
-    days?: [schedule.Range];
-    hours?: Array<number>;
-    minute: number;
-  }): schedule.RecurrenceRule | null {
-  const rule = new schedule.RecurrenceRule();
-  if (days === undefined) return null;
-  if (hours === undefined) return null;
-  rule.dayOfWeek = days;
-  rule.hour = hours;
-  rule.minute = minute;
-  return rule;
-}
-
-function getRandomText(dolarType: string, dolarPrice: number): string {
-  const DOLAR_LABEL = [
-    `Un dolar ${dolarType} en este momento son $${dolarPrice} pesos argentinos`,
-    `Hoy, un dolar ${dolarType} está $${dolarPrice} pesos argentinos`,
-    `En este momento, el dolar ${dolarType} está a $${dolarPrice} pesos argentinos`,
-    `El dolar ${dolarType} se encuentra a $${dolarPrice} pesos argentinos`,
-    `Un dolar ${dolarType} cuesta $${dolarPrice} pesos argentinos`,
-    `Ahora, un dolar ${dolarType} vale $${dolarPrice} pesos argentinos`,
-    `Al dia de hoy un dolar ${dolarType} está a $${dolarPrice} pesos argentinos`,
-    `Un dolar ${dolarType} al día de hoy equivale a $${dolarPrice} pesos argentinos`,
-    `Un dolar ${dolarType} está a $${dolarPrice} pesos argentinos`,
-    `Hoy el dolar ${dolarType} está a $${dolarPrice} pesos argentinos`,
-    `Un dolar ${dolarType}, $${dolarPrice} pesos argentinos`,
-    `Actualmente un dolar ${dolarType} está a $${dolarPrice} pesos argentinos`,
-    `Actualmente, un dolar ${dolarType} equivale a $${dolarPrice} pesos argentinos`,
-    `En el dia de hoy, un dolar ${dolarType} vale $${dolarPrice} pesos argentinos`,
-    `El dolar ${dolarType} equivale $${dolarPrice} pesos argentinos`,
-  ];
-  return DOLAR_LABEL[Math.floor(Math.random() * DOLAR_LABEL.length)];
-};
-
-function getNow(): string {
-  const today = new Date();
-  const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-  const time = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
-  return date + ' ' + time;
-};

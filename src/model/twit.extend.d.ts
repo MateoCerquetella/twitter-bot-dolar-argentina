@@ -46,3 +46,46 @@ export interface User {
 export interface Entities {
   description: string[];
 }
+
+export interface Welcome {
+  statuses: Status[];
+  search_metadata: SearchMetadata;
+}
+export interface SearchMetadata {
+  completed_in: number;
+  max_id: number;
+  max_id_str: string;
+  next_results: string;
+  query: string;
+  refresh_url: string;
+  count: number;
+  since_id: number;
+  since_id_str: string;
+}
+export interface Status {
+  created_at: string;
+  id: number;
+  id_str: string;
+  text: string;
+  truncated: boolean;
+  entities: string[];
+  metadata: string[];
+  source: string;
+  in_reply_to_status_id: null;
+  in_reply_to_status_id_str: null;
+  in_reply_to_user_id: null;
+  in_reply_to_user_id_str: null;
+  in_reply_to_screen_name: null;
+  user: string[];
+  geo: null;
+  coordinates: null;
+  place: null;
+  contributors: null;
+  retweeted_status: string[];
+  is_quote_status: boolean;
+  retweet_count: number;
+  favorite_count: number;
+  favorited: boolean;
+  retweeted: boolean;
+  lang: string;
+}
