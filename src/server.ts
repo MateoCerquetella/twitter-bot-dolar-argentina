@@ -21,23 +21,6 @@ const Twitter = new Twit({
   getUsersIdBySearch();
 }());
 
-async function getApiDolar(): Promise<Array<DolarTwitI> | void> {
-  try {
-    const URL = 'https://api.bluelytics.com.ar/v2/latest';
-    const res = await api<DolarResponseI>(URL);
-    return [{
-      dolarType: 'blue',
-      dolarValue: Math.ceil(res.blue.value_sell)
-    },
-    {
-      dolarType: 'solidario',
-      dolarValue: +(res.oficial.value_sell * 1.65).toFixed(2)
-    }];
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 async function schedulerJob(): Promise<void> {
   const DOLAR_RULE = getScheduleRule({
     days: [new schedule.Range(1, 5)],
@@ -56,6 +39,24 @@ async function schedulerJob(): Promise<void> {
   });
 }
 
+async function getApiDolar(): Promise<Array<DolarTwitI> | null> {
+  try {
+    const URL = 'https://api.bluelytics.com.ar/v2/latest';
+    const res = await api<DolarResponseI>(URL);
+    return [{
+      dolarType: 'blue',
+      dolarValue: Math.ceil(res.blue.value_sell)
+    },
+    {
+      dolarType: 'solidario',
+      dolarValue: +(res.oficial.value_sell * 1.65).toFixed(2)
+    }];
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
 function postToTwitter(dolarLabel: string, dolarType: string, dolarPrice: number): void {
   Twitter.post('statuses/update', { status: dolarLabel }, function () {
     console.log(`Twitted dolar ${dolarType}
@@ -69,6 +70,7 @@ function getUsersIdBySearch(): Array<number> | null {
   const QUERY = 'dolar';
   const MAX_TWEETS = 10;
   let users_id: Array<number> | null = null;
+
   Twitter.get('search/tweets', { q: QUERY, geocode: BUENOS_AIRES_GEO, count: MAX_TWEETS }, function (data: object) {
     const twitterData: Welcome | null = data as Welcome; // Cast Object to Welcome or null model
 
