@@ -71,18 +71,15 @@ function getUsersIdBySearch(): Array<number> | null {
   const MAX_TWEETS = 10;
   let users_id: Array<number> | null = null;
 
-  Twitter.get('search/tweets', { q: QUERY, geocode: BUENOS_AIRES_GEO, count: MAX_TWEETS }, function (data: object) {
-    const twitterData: Welcome | null = data as Welcome; // Cast Object to Welcome or null model
+  Twitter.get('search/tweets', { q: QUERY, geocode: BUENOS_AIRES_GEO, count: MAX_TWEETS }, function (err, data: object, res) {
+    if (!data) return;
 
-    if (twitterData) {
-      const twitterStatuses: Status[] = twitterData.statuses; // Cast Welcome.statuses to Status[] model
-      return users_id = twitterStatuses.map(twit => {
-        const user = twit.user as unknown as User;
-        return user.id;
-      });
-    } else {
-      return;
-    }
+    const twitterData: Welcome = data as Welcome; // Cast Object to Welcome
+    const twitterStatuses: Status[] = twitterData.statuses; // Cast Welcome.statuses to Status[] model
+    return users_id = twitterStatuses.map(twit => {
+      const user = twit.user as unknown as User;
+      return user.id;
+    });
   });
   return users_id;
 }
