@@ -78,29 +78,24 @@ function getUsersIdBySearch(): void {
 
     const TWITTER_DATA: Welcome = data as Welcome; // Cast Object to Welcome
     const TWITTER_STATUS: Status[] = TWITTER_DATA.statuses; // Cast Welcome.statuses to Status[] model
-    let userFollowers: UserFollow[] | null = null;
 
-    userFollowers = TWITTER_STATUS.map(twit => {
+    TWITTER_STATUS.forEach(twit => {
       const user = twit.user as unknown as User;
       const userFollow: UserFollow = {
         id_str: user.id_str.toString(),
         screen_name: user.screen_name
       };
-      return userFollow;
+      followUsers(userFollow);
     });
-
-    followUsers(userFollowers);
   });
 
-  function followUsers(userFollowers: UserFollow[] | null): void {
-    userFollowers?.forEach(user => {
-      Twitter.post('friendships/create', { id: user.id_str }, function (err, result, response) {
-        if (err) {
-          console.log(err);
-          return;
-        };
-        (result) ? console.log(`Seguido a ${user.screen_name}`) : null;
-      });
+  function followUsers(userFollow: UserFollow): void {
+    Twitter.post('friendships/create', { id: userFollow.id_str }, function (err, result, response) {
+      if (err) {
+        console.log(err);
+        return;
+      };
+      (result) ? console.log(`Seguido a ${userFollow.screen_name}`) : null;
     });
   }
 }
