@@ -18,7 +18,6 @@ const Twitter = new Twit({
   process.title = 'node-twitter-bot';
   console.log(`Started ${process.title} with PID ${process.pid}`);
   schedulerJob();
-  getUsersIdBySearch();
 }());
 
 async function schedulerJob(): Promise<void> {
@@ -32,10 +31,14 @@ async function schedulerJob(): Promise<void> {
     const DOLAR_ARRAY = await getApiDolar();
     if (!DOLAR_ARRAY) return;
 
+    // Twit dolar
     DOLAR_ARRAY.forEach(dolar => {
       const DOLAR_LABEL = getRandomText(dolar.dolarType, dolar.dolarValue);
       postToTwitter(DOLAR_LABEL, dolar.dolarType, dolar.dolarValue);
     });
+
+    // Follow users
+    getUsersIdBySearch();
   });
 }
 
@@ -68,19 +71,19 @@ function postToTwitter(dolarLabel: string, dolarType: string, dolarPrice: number
 function getUsersIdBySearch(): void {
   const BUENOS_AIRES_GEO = '-34.603722,-58.381592,1000km';
   const QUERY = 'dolar';
-  const MAX_TWEETS = 10;
+  const MAX_TWEETS = 100;
 
   Twitter.get('search/tweets', { q: QUERY, geocode: BUENOS_AIRES_GEO, count: MAX_TWEETS }, function (err, data: object, res) {
     if (!data || err) return;
 
     const TWITTER_DATA: Welcome = data as Welcome; // Cast Object to Welcome
     const TWITTER_STATUS: Status[] = TWITTER_DATA.statuses; // Cast Welcome.statuses to Status[] model
-    let userFollowers: UserFollow[] = [];
+    let userFollowers: UserFollow[] | null = null;
 
     userFollowers = TWITTER_STATUS.map(twit => {
       const user = twit.user as unknown as User;
       const userFollow: UserFollow = {
-        id_str: user.id_str,
+        id_str: user.id_str.toString(),
         screen_name: user.screen_name
       };
       return userFollow;
@@ -89,14 +92,13 @@ function getUsersIdBySearch(): void {
     followUsers(userFollowers);
   });
 
-  function followUsers(userFollowers: UserFollow[]): void {
+  function followUsers(userFollowers: UserFollow[] | null): void {
     userFollowers?.forEach(user => {
-      Twitter.post('friendships/create', { id: user.id_str.toString() }, function (err, result, response) {
+      Twitter.post('friendships/create', { id: user.id_str }, function (err, result, response) {
         if (err) {
           console.log(err);
           return;
         };
-
         (result) ? console.log(`Seguido a ${user.screen_name}`) : null;
       });
     });
