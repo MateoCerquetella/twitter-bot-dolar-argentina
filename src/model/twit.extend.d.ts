@@ -89,3 +89,8 @@ export interface Status {
   retweeted: boolean;
   lang: string;
 }
+
+export interface UserFollow {
+  id_str: string;
+  screen_name: string;
+}
