@@ -2,7 +2,7 @@ import Twit from 'twit';
 import dotenv from 'dotenv';
 import schedule from 'node-schedule';
 import process from 'process';
-import { DolarResponseI, DolarTwitI } from "./model/dolar.model";
+import { DolarResponseI, DolarTwitI, DolarType } from "./model/dolar.model";
 import { Status, User, UserFollow, Welcome } from './model/twit.extend';
 import { api, getNow, getRandomText, getScheduleRule } from './helpers/helpers';
 dotenv.config();
@@ -47,11 +47,11 @@ async function getApiDolar(): Promise<Array<DolarTwitI> | null> {
     const URL = 'https://api.bluelytics.com.ar/v2/latest';
     const res = await api<DolarResponseI>(URL);
     return [{
-      dolarType: 'blue',
+      dolarType: DolarType.blue,
       dolarValue: Math.ceil(res.blue.value_sell)
     },
     {
-      dolarType: 'solidario',
+      dolarType: DolarType.solidario,
       dolarValue: +(res.oficial.value_sell * 1.65).toFixed(2)
     }];
   } catch (error) {
@@ -85,11 +85,11 @@ function getUsersIdBySearch(): void {
         id_str: user.id_str.toString(),
         screen_name: user.screen_name
       };
-      followUsers(userFollow);
+      followUser(userFollow);
     });
   });
 
-  function followUsers(userFollow: UserFollow): void {
+  function followUser(userFollow: UserFollow): void {
     Twitter.post('friendships/create', { id: userFollow.id_str }, function (err, result, response) {
       if (err) {
         console.log(err);

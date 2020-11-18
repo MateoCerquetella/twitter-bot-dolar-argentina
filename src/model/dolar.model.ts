@@ -16,3 +16,9 @@ export type DolarTwitI = {
   dolarType: string;
   dolarValue: number;
 };
+
+export enum DolarType {
+  oficial = 'oficial',
+  blue = 'blue',
+  solidario = 'solidario'
+}
