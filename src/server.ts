@@ -1,12 +1,12 @@
-import Twit from "twit";
-import dotenv from "dotenv";
-import schedule from "node-schedule";
-import process from "process";
-import { DolarResponse, DolarTwit, DolarType } from "./model/dolar.model";
-import { Status, User, UserFollow, Welcome } from "./model/twit.extend";
-import { api, getNow, getRandomText, getScheduleRule } from "./helpers/helpers";
-import { TwitterError } from "./model/error.model";
-import { ScheduleRule } from "./model/schedule.model";
+import Twit from 'twit';
+import dotenv from 'dotenv';
+import schedule from 'node-schedule';
+import process from 'process';
+import { DolarResponse, DolarTwit, DolarType } from './model/dolar.model';
+import { Status, User, UserFollow, Welcome } from './model/twit.extend';
+import { api, getNow, getRandomText, getScheduleRule } from './helpers/helpers';
+import { TwitterError } from './model/error.model';
+import { ScheduleRule } from './model/schedule.model';
 dotenv.config();
 
 const Twitter = new Twit({
@@ -17,7 +17,7 @@ const Twitter = new Twit({
 });
 
 (function main(): void {
-  process.title = "node-twitter-bot";
+  process.title = 'node-twitter-bot';
   console.log(`Started ${process.title} with PID ${process.pid}`);
   schedulerJob();
 })();
@@ -50,7 +50,7 @@ async function schedulerJob(): Promise<void> {
 
 async function getApiDolar(): Promise<Array<DolarTwit> | null> {
   try {
-    const URL = "https://api.bluelytics.com.ar/v2/latest";
+    const URL = 'https://api.bluelytics.com.ar/v2/latest';
     const res = await api<DolarResponse>(URL);
     return [
       {
@@ -73,7 +73,7 @@ function postToTwitter(
   dolarType: string,
   dolarPrice: number
 ): void {
-  Twitter.post("statuses/update", { status: dolarLabel }, function () {
+  Twitter.post('statuses/update', { status: dolarLabel }, function () {
     console.log(`Twitted dolar ${dolarType}
                 price: $${dolarPrice}
                 date: ${getNow()}`);
@@ -81,12 +81,12 @@ function postToTwitter(
 }
 
 function getUsersIdBySearch(): void {
-  const BUENOS_AIRES_GEO = "-34.603722,-58.381592,1000km";
-  const QUERY = "dolar";
+  const BUENOS_AIRES_GEO = '-34.603722,-58.381592,1000km';
+  const QUERY = 'dolar';
   const MAX_TWEETS = 100;
 
   Twitter.get(
-    "search/tweets",
+    'search/tweets',
     { q: QUERY, geocode: BUENOS_AIRES_GEO, count: MAX_TWEETS },
     function (err, result: object, response) {
       if (!result || err) return;
@@ -108,9 +108,9 @@ function getUsersIdBySearch(): void {
   );
 
   async function followUser(user: UserFollow): Promise<void> {
-    console.log(user.screen_name, "user es");
+    console.log(user.screen_name, 'user es');
 
-    Twitter.post("friendships/create", { id: user.id_str }, function (
+    Twitter.post('friendships/create', { id: user.id_str }, function (
       err,
       result,
       response

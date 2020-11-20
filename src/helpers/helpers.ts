@@ -1,6 +1,6 @@
-import schedule from "node-schedule";
-import fetch from "node-fetch";
-import { ScheduleRule } from "src/model/schedule.model";
+import schedule from 'node-schedule';
+import fetch from 'node-fetch';
+import { ScheduleRule } from 'src/model/schedule.model';
 
 export async function api<T>(url: string): Promise<T> {
   const response = await fetch(url);
@@ -13,10 +13,10 @@ export async function api<T>(url: string): Promise<T> {
 export function getNow(): string {
   const today = new Date();
   const date =
-    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+    today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
   const time =
-    today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-  return date + " " + time;
+    today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+  return date + ' ' + time;
 }
 
 export function getScheduleRule({
@@ -50,4 +50,8 @@ export function getRandomText(dolarType: string, dolarPrice: number): string {
     `El dolar ${dolarType} equivale $${dolarPrice} pesos argentinos`,
   ];
   return DOLAR_LABEL[Math.floor(Math.random() * DOLAR_LABEL.length)];
+}
+
+export async function waitFor(delay: number) {
+  new Promise((resolve) => setTimeout(resolve, delay));
 }

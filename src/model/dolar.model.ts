@@ -18,7 +18,7 @@ export type DolarTwit = {
 };
 
 export enum DolarType {
-  oficial = "oficial",
-  blue = "blue",
-  solidario = "solidario",
+  oficial = 'oficial',
+  blue = 'blue',
+  solidario = 'solidario',
 }
