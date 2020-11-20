@@ -5,6 +5,7 @@ import process from 'process';
 import { DolarResponseI, DolarTwitI, DolarType } from "./model/dolar.model";
 import { Status, User, UserFollow, Welcome } from './model/twit.extend';
 import { api, getNow, getRandomText, getScheduleRule } from './helpers/helpers';
+import { TwitterError } from './model/error.model';
 dotenv.config();
 
 const Twitter = new Twit({
@@ -23,8 +24,8 @@ const Twitter = new Twit({
 async function schedulerJob(): Promise<void> {
   const DOLAR_RULE = getScheduleRule({
     days: [new schedule.Range(1, 5)],
-    hours: [10, 14, 19, 22],
-    minute: 7
+    hours: [10, 14, 19, 23],
+    minute: 9
   });
 
   schedule.scheduleJob(DOLAR_RULE!, async function getDolarAndPost(): Promise<void> {
@@ -33,8 +34,8 @@ async function schedulerJob(): Promise<void> {
 
     // Twit dolar
     DOLAR_ARRAY.forEach(dolar => {
-      const DOLAR_LABEL = getRandomText(dolar.dolarType, dolar.dolarValue);
-      postToTwitter(DOLAR_LABEL, dolar.dolarType, dolar.dolarValue);
+      // const DOLAR_LABEL = getRandomText(dolar.dolarType, dolar.dolarValue);
+      // postToTwitter(DOLAR_LABEL, dolar.dolarType, dolar.dolarValue);
     });
 
     // Follow users
@@ -73,10 +74,10 @@ function getUsersIdBySearch(): void {
   const QUERY = 'dolar';
   const MAX_TWEETS = 100;
 
-  Twitter.get('search/tweets', { q: QUERY, geocode: BUENOS_AIRES_GEO, count: MAX_TWEETS }, function (err: Error, data: object, res) {
-    if (!data || err) return;
+  Twitter.get('search/tweets', { q: QUERY, geocode: BUENOS_AIRES_GEO, count: MAX_TWEETS }, function (err, result: object, response) {
+    if (!result || err) return;
 
-    const TWITTER_DATA: Welcome = data as Welcome; // Cast Object to Welcome
+    const TWITTER_DATA: Welcome = result as Welcome; // Cast Object to Welcome
     const TWITTER_STATUS: Status[] = TWITTER_DATA.statuses; // Cast Welcome.statuses to Status[] model
 
     TWITTER_STATUS.forEach(twit => {
@@ -94,10 +95,11 @@ function getUsersIdBySearch(): void {
   function followUser(userFollow: UserFollow): void {
     Twitter.post('friendships/create', { id: userFollow.id_str }, function (err, result, response) {
       if (err) {
-        console.log(err);
+        const twitterError = err as unknown as TwitterError;
+        (twitterError.code === 161) ? console.log(`Unable to follow - follow limit`) : console.log(twitterError.allErrors[0].message);
         return;
       };
-      (result) ? console.log(`Followed ${userFollow.screen_name}`) : null;
+      console.log(`Followed ${userFollow.screen_name} on ${getNow()}`);
     });
   }
 }
