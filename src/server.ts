@@ -23,8 +23,8 @@ const Twitter = new Twit({
 async function schedulerJob(): Promise<void> {
   const DOLAR_RULE = getScheduleRule({
     days: [new schedule.Range(1, 5)],
-    hours: [10, 14, 19],
-    minute: 30
+    hours: [10, 14, 19, 22],
+    minute: 7
   });
 
   schedule.scheduleJob(DOLAR_RULE!, async function getDolarAndPost(): Promise<void> {
@@ -73,7 +73,7 @@ function getUsersIdBySearch(): void {
   const QUERY = 'dolar';
   const MAX_TWEETS = 100;
 
-  Twitter.get('search/tweets', { q: QUERY, geocode: BUENOS_AIRES_GEO, count: MAX_TWEETS }, function (err, data: object, res) {
+  Twitter.get('search/tweets', { q: QUERY, geocode: BUENOS_AIRES_GEO, count: MAX_TWEETS }, function (err: Error, data: object, res) {
     if (!data || err) return;
 
     const TWITTER_DATA: Welcome = data as Welcome; // Cast Object to Welcome
@@ -85,7 +85,9 @@ function getUsersIdBySearch(): void {
         id_str: user.id_str.toString(),
         screen_name: user.screen_name
       };
-      followUser(userFollow);
+      setInterval(() => {
+        followUser(userFollow);
+      }, 1000);
     });
   });
 
@@ -95,7 +97,7 @@ function getUsersIdBySearch(): void {
         console.log(err);
         return;
       };
-      (result) ? console.log(`Seguido a ${userFollow.screen_name}`) : null;
+      (result) ? console.log(`Followed ${userFollow.screen_name}`) : null;
     });
   }
 }
