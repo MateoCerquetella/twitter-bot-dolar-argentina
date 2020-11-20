@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/server.ts",
   "scripts": {
-    "prod": "pm2 start dist/server.js",
+    "prod": "tsc --project ./ && pm2 start dist/server.js -n DolarTwitter",
     "node": "node dist/server.js",
     "build": "tsc --project ./",
     "dev": "ts-node src/server.ts"
