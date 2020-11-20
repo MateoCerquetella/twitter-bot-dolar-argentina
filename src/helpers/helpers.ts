@@ -1,5 +1,6 @@
-import schedule from 'node-schedule';
-import fetch from 'node-fetch';
+import schedule from "node-schedule";
+import fetch from "node-fetch";
+import { ScheduleRule } from "src/model/schedule.model";
 
 export async function api<T>(url: string): Promise<T> {
   const response = await fetch(url);
@@ -11,23 +12,19 @@ export async function api<T>(url: string): Promise<T> {
 
 export function getNow(): string {
   const today = new Date();
-  const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-  const time = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
-  return date + ' ' + time;
-};
+  const date =
+    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+  const time =
+    today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  return date + " " + time;
+}
 
-export function getScheduleRule(
-  { days,
-    hours,
-    minute
-  }: {
-    days?: [schedule.Range];
-    hours?: Array<number>;
-    minute: number;
-  }): schedule.RecurrenceRule | null {
+export function getScheduleRule({
+  days,
+  hours,
+  minute,
+}: ScheduleRule): schedule.RecurrenceRule {
   const rule = new schedule.RecurrenceRule();
-  if (days === undefined) return null;
-  if (hours === undefined) return null;
   rule.dayOfWeek = days;
   rule.hour = hours;
   rule.minute = minute;
@@ -53,4 +50,4 @@ export function getRandomText(dolarType: string, dolarPrice: number): string {
     `El dolar ${dolarType} equivale $${dolarPrice} pesos argentinos`,
   ];
   return DOLAR_LABEL[Math.floor(Math.random() * DOLAR_LABEL.length)];
-};
+}

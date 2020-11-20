@@ -1,24 +1,24 @@
-export type DolarResponseI = {
-  oficial: DolarI;
-  blue: DolarI;
-  oficial_euro: DolarI;
-  blue_euro: DolarI;
+export type DolarResponse = {
+  oficial: Dolar;
+  blue: Dolar;
+  oficial_euro: Dolar;
+  blue_euro: Dolar;
   last_update: Date;
 };
 
-export type DolarI = {
+export type Dolar = {
   value_avg: number;
   value_sell: number;
   value_buy: number;
 };
 
-export type DolarTwitI = {
+export type DolarTwit = {
   dolarType: string;
   dolarValue: number;
 };
 
 export enum DolarType {
-  oficial = 'oficial',
-  blue = 'blue',
-  solidario = 'solidario'
+  oficial = "oficial",
+  blue = "blue",
+  solidario = "solidario",
 }
