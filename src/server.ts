@@ -31,21 +31,22 @@ async function schedulerJob(): Promise<void> {
 
   const DOLAR_RULE = getScheduleRule(scheduleTwit);
 
-  schedule.scheduleJob(DOLAR_RULE!, async function getDolarAndPost(): Promise<
-    void
-  > {
-    const DOLAR_ARRAY = await getApiDolar();
-    if (!DOLAR_ARRAY) return;
+  schedule.scheduleJob(
+    DOLAR_RULE!,
+    async function getDolarAndPost(): Promise<void> {
+      const DOLAR_ARRAY = await getApiDolar();
+      if (!DOLAR_ARRAY) return;
 
-    // Twit dolar
-    DOLAR_ARRAY.forEach((dolar) => {
-      const DOLAR_LABEL = getRandomText(dolar.dolarType, dolar.dolarValue);
-      postToTwitter(DOLAR_LABEL, dolar.dolarType, dolar.dolarValue);
-    });
+      // Twit dolar
+      DOLAR_ARRAY.forEach((dolar) => {
+        const DOLAR_LABEL = getRandomText(dolar.dolarType, dolar.dolarValue);
+        postToTwitter(DOLAR_LABEL, dolar.dolarType, dolar.dolarValue);
+      });
 
-    // Follow users
-    getUsersIdBySearch();
-  });
+      // Follow users
+      getUsersIdBySearch();
+    }
+  );
 }
 
 async function getApiDolar(): Promise<Array<DolarTwit> | null> {
@@ -108,21 +109,19 @@ function getUsersIdBySearch(): void {
   );
 
   async function followUser(user: UserFollow): Promise<void> {
-    console.log(user.screen_name, 'user es');
-
-    Twitter.post('friendships/create', { id: user.id_str }, function (
-      err,
-      result,
-      response
-    ) {
-      if (err) {
-        const twitterError = (err as unknown) as TwitterError;
-        twitterError.code === 161
-          ? console.log(`Unable to follow - follow limit`)
-          : console.log(twitterError.allErrors[0].message);
-        return;
+    Twitter.post(
+      'friendships/create',
+      { id: user.id_str },
+      function (err, result, response) {
+        if (err) {
+          const twitterError = (err as unknown) as TwitterError;
+          twitterError.code === 161
+            ? console.log(`Unable to follow - follow limit`)
+            : console.log(twitterError.allErrors[0].message);
+          return;
+        }
+        console.log(`Followed ${user.screen_name} on ${getNow()}`);
       }
-      console.log(`Followed ${user.screen_name} on ${getNow()}`);
-    });
+    );
   }
 }
