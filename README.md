@@ -2,11 +2,11 @@
 
 ### 💰 Install
 
-#### `yarn install`
+#### `yarn`
 
 ### 💲 Scripts
 
-#### `yarn run dev`
+#### `yarn dev`
 
 Starts the application in development.
 It's required to add your env keys before running the server to proper function
