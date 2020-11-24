@@ -6,6 +6,7 @@ import { DolarResponse, DolarTwit, DolarType } from './model/dolar.model';
 import { Status, User, UserFollow, Welcome } from './model/twit.extend';
 import {
   api,
+  differencePercentage,
   getNow,
   getRandomText,
   getScheduleRule,
@@ -131,7 +132,10 @@ async function followUser(user: UserFollow, MAX_TWEETS: number): Promise<void> {
     function (err, result, response) {
       err ? errorFollow++ : okFollow++;
       print(
-        `Successful follow: ${okFollow} Unable to follow: ${errorFollow} Percentage: ${percentage(
+        `Successful follow: ${okFollow} - Unable to follow: ${errorFollow} - Success percentage: ${differencePercentage(
+          okFollow,
+          errorFollow
+        )}% - Total percentage: ${percentage(
           okFollow,
           errorFollow,
           MAX_TWEETS

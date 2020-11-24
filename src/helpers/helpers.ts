@@ -62,3 +62,7 @@ export function print(msg: string) {
 export function percentage(n1: number, n2: number, total: number) {
   return (((n1 + n2) / total) * 100).toFixed(2);
 }
+
+export function differencePercentage(n1: number, n2: number) {
+  return ((n1 / n2) * 100).toFixed(2);
+}
