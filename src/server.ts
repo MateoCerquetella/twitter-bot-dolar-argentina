@@ -16,6 +16,12 @@ const Twitter = new Twit({
   access_token_secret: process.env.ACCESS_TOKEN_SECRET,
 });
 
+const scheduleTwit: ScheduleRule = {
+  days: [new schedule.Range(1, 5)],
+  hours: [10, 14, 19],
+  minute: 30,
+};
+
 (function main(): void {
   process.title = 'node-twitter-bot';
   console.log(`Started ${process.title} with PID ${process.pid}`);
@@ -23,16 +29,10 @@ const Twitter = new Twit({
 })();
 
 async function schedulerJob(): Promise<void> {
-  const scheduleTwit: ScheduleRule = {
-    days: [new schedule.Range(1, 5)],
-    hours: [10, 14, 19],
-    minute: 30,
-  };
-
   const DOLAR_RULE = getScheduleRule(scheduleTwit);
 
   schedule.scheduleJob(
-    DOLAR_RULE!,
+    DOLAR_RULE,
     async function getDolarAndPost(): Promise<void> {
       const DOLAR_ARRAY = await getApiDolar();
       if (!DOLAR_ARRAY) return;
@@ -90,38 +90,42 @@ function getUsersIdBySearch(): void {
     'search/tweets',
     { q: QUERY, geocode: BUENOS_AIRES_GEO, count: MAX_TWEETS },
     function (err, result: object, response) {
-      if (!result || err) return;
-
-      const TWITTER_DATA: Welcome = result as Welcome; // Cast Object to Welcome
-      const TWITTER_STATUS: Status[] = TWITTER_DATA.statuses; // Cast Welcome.statuses to Status[] model
-
-      TWITTER_STATUS.forEach((twit) => {
-        const user = (twit.user as unknown) as User;
-        const userFollow: UserFollow = {
-          id_str: user.id_str.toString(),
-          screen_name: user.screen_name,
-        };
-        setInterval(async () => {
-          await followUser(userFollow);
-        }, 10000);
-      });
+      if (!result || err) {
+        console.log(`Unable to fetch tweets, error: ${err}`);
+        return;
+      }
+      castAndFollowUser(result);
     }
   );
+}
 
-  async function followUser(user: UserFollow): Promise<void> {
-    Twitter.post(
-      'friendships/create',
-      { id: user.id_str },
-      function (err, result, response) {
-        if (err) {
-          const twitterError = (err as unknown) as TwitterError;
-          twitterError.code === 161
-            ? console.log(`Unable to follow - follow limit`)
-            : console.log(twitterError.allErrors[0].message);
-          return;
-        }
-        console.log(`Followed ${user.screen_name} on ${getNow()}`);
+function castAndFollowUser(result: object): void {
+  const TWITTER_DATA: Welcome = result as Welcome; // Cast Object to Welcome
+  const TWITTER_STATUS: Status[] = TWITTER_DATA.statuses; // Cast Welcome.statuses to Status[] model
+
+  TWITTER_STATUS.forEach(async (twit) => {
+    const user = (twit.user as unknown) as User;
+    const userFollow: UserFollow = {
+      id_str: user.id_str.toString(),
+      screen_name: user.screen_name,
+    };
+    await followUser(userFollow);
+  });
+}
+
+async function followUser(user: UserFollow): Promise<void> {
+  Twitter.post(
+    'friendships/create',
+    { id: user.id_str },
+    function (err, result, response) {
+      if (err) {
+        const twitterError = (err as unknown) as TwitterError;
+        twitterError.code === 161
+          ? console.log(`Unable to follow - follow limit`)
+          : console.log(twitterError.allErrors[0].message);
+        return;
       }
-    );
-  }
+      console.log(`Followed ${user.screen_name} on ${getNow()}`);
+    }
+  );
 }
