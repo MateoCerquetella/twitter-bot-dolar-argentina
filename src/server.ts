@@ -12,7 +12,6 @@ import {
   percentage,
   print,
 } from './helpers/helpers';
-import { TwitterError } from './model/error.model';
 import { ScheduleRule } from './model/schedule.model';
 dotenv.config();
 
