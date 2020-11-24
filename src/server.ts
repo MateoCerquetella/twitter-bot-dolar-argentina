@@ -4,11 +4,19 @@ import schedule from 'node-schedule';
 import process from 'process';
 import { DolarResponse, DolarTwit, DolarType } from './model/dolar.model';
 import { Status, User, UserFollow, Welcome } from './model/twit.extend';
-import { api, getNow, getRandomText, getScheduleRule } from './helpers/helpers';
+import {
+  api,
+  getNow,
+  getRandomText,
+  getScheduleRule,
+  percentage,
+  print,
+} from './helpers/helpers';
 import { TwitterError } from './model/error.model';
 import { ScheduleRule } from './model/schedule.model';
 dotenv.config();
 
+// Global Variables
 const Twitter = new Twit({
   consumer_key: process.env.CONSUMER_KEY!,
   consumer_secret: process.env.CONSUMER_SECRET!,
@@ -21,6 +29,10 @@ const scheduleTwit: ScheduleRule = {
   hours: [10, 14, 19],
   minute: 30,
 };
+
+// Counters
+let okFollow = 0;
+let errorFollow = 0;
 
 (function main(): void {
   process.title = 'node-twitter-bot';
@@ -94,12 +106,12 @@ function getUsersIdBySearch(): void {
         console.log(`Unable to fetch tweets, error: ${err}`);
         return;
       }
-      castAndFollowUser(result);
+      castAndFollowUser(result, MAX_TWEETS);
     }
   );
 }
 
-function castAndFollowUser(result: object): void {
+function castAndFollowUser(result: object, MAX_TWEETS: number): void {
   const TWITTER_DATA: Welcome = result as Welcome; // Cast Object to Welcome
   const TWITTER_STATUS: Status[] = TWITTER_DATA.statuses; // Cast Welcome.statuses to Status[] model
 
@@ -109,23 +121,23 @@ function castAndFollowUser(result: object): void {
       id_str: user.id_str.toString(),
       screen_name: user.screen_name,
     };
-    await followUser(userFollow);
+    await followUser(userFollow, MAX_TWEETS);
   });
 }
 
-async function followUser(user: UserFollow): Promise<void> {
+async function followUser(user: UserFollow, MAX_TWEETS: number): Promise<void> {
   Twitter.post(
     'friendships/create',
     { id: user.id_str },
     function (err, result, response) {
-      if (err) {
-        const twitterError = (err as unknown) as TwitterError;
-        twitterError.code === 161
-          ? console.log(`Unable to follow - follow limit`)
-          : console.log(twitterError.allErrors[0].message);
-        return;
-      }
-      console.log(`Followed ${user.screen_name} on ${getNow()}`);
+      err ? errorFollow++ : okFollow++;
+      print(
+        `Successful follow: ${okFollow} Unable to follow: ${errorFollow} Percentage: ${percentage(
+          okFollow,
+          errorFollow,
+          MAX_TWEETS
+        )}%`
+      );
     }
   );
 }

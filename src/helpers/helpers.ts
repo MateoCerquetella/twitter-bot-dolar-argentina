@@ -58,3 +58,7 @@ export function print(msg: string) {
   readline.cursorTo(process.stdout, 0);
   process.stdout.write(msg);
 }
+
+export function percentage(n1: number, n2: number, total: number) {
+  return (((n1 + n2) / total) * 100).toFixed(2);
+}
