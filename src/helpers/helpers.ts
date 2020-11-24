@@ -1,6 +1,8 @@
 import schedule from 'node-schedule';
 import fetch from 'node-fetch';
+import process from 'process';
 import { ScheduleRule } from 'src/model/schedule.model';
+import readline from 'readline';
 
 export async function api<T>(url: string): Promise<T> {
   const response = await fetch(url);
@@ -52,6 +54,7 @@ export function getRandomText(dolarType: string, dolarPrice: number): string {
   return DOLAR_LABEL[Math.floor(Math.random() * DOLAR_LABEL.length)];
 }
 
-export async function waitFor(delay: number) {
-  new Promise((resolve) => setTimeout(resolve, delay));
+export function print(msg: string) {
+  readline.cursorTo(process.stdout, 0);
+  process.stdout.write(msg);
 }
