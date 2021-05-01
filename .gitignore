@@ -123,3 +123,4 @@ Thumbs.db
 */README.MD
 *.env
 .env
+package-lock.json
