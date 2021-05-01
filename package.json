@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/server.ts",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "prod": "tsc --project ./ && pm2 start dist/server.js -n DolarTwitter",
     "node": "node dist/server.js",
