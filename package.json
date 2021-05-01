@@ -8,7 +8,7 @@
   },
   "scripts": {
     "prod": "tsc --project ./ && pm2 start dist/server.js -n DolarTwitter",
-    "node": "node dist/server.js",
+    "start": "node dist/server.js",
     "build": "tsc --project ./",
     "dev": "ts-node src/server.ts"
   },
