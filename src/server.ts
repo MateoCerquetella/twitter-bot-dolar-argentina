@@ -1,7 +1,3 @@
-import Twit from 'twit';
-import dotenv from 'dotenv';
-import schedule from 'node-schedule';
-import process from 'process';
 import { DolarResponse, DolarTwit, DolarType } from './model/dolar.model';
 import { Status, User, UserFollow, Welcome } from './model/twit.extend';
 import {
@@ -10,9 +6,14 @@ import {
   getRandomText,
   getScheduleRule,
   percentage,
-  print,
+  print
 } from './helpers/helpers';
+
 import { ScheduleRule } from './model/schedule.model';
+import Twit from 'twit';
+import dotenv from 'dotenv';
+import process from 'process';
+import schedule from 'node-schedule';
 dotenv.config();
 
 // Global Variables
@@ -20,13 +21,13 @@ const Twitter = new Twit({
   consumer_key: process.env.CONSUMER_KEY!,
   consumer_secret: process.env.CONSUMER_SECRET!,
   access_token: process.env.ACCESS_TOKEN,
-  access_token_secret: process.env.ACCESS_TOKEN_SECRET,
+  access_token_secret: process.env.ACCESS_TOKEN_SECRET
 });
 
 const scheduleTwit: ScheduleRule = {
   days: [new schedule.Range(1, 5)],
   hours: [10, 14, 19],
-  minute: 30,
+  minute: 30
 };
 
 // Counters
@@ -67,12 +68,12 @@ async function getApiDolar(): Promise<Array<DolarTwit> | null> {
     return [
       {
         dolarType: DolarType.blue,
-        dolarValue: Math.ceil(res.blue.value_sell),
+        dolarValue: Math.ceil(res.blue.value_sell)
       },
       {
         dolarType: DolarType.solidario,
-        dolarValue: +(res.oficial.value_sell * 1.65).toFixed(2),
-      },
+        dolarValue: +(res.oficial.value_sell * 1.65).toFixed(2)
+      }
     ];
   } catch (error) {
     console.log(error);
@@ -118,7 +119,7 @@ function castAndFollowUser(result: object, MAX_TWEETS: number): void {
     const user = (twit.user as unknown) as User;
     const userFollow: UserFollow = {
       id_str: user.id_str.toString(),
-      screen_name: user.screen_name,
+      screen_name: user.screen_name
     };
     await followUser(userFollow, MAX_TWEETS);
   });
