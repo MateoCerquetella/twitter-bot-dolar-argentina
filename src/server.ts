@@ -21,7 +21,6 @@ class Server {
 
   private async schedulerJob(): Promise<void> {
     const DOLAR_RULE = getScheduleRule(this.scheduleTwit);
-
     schedule.scheduleJob(DOLAR_RULE, this.getDolarAndPost);
   }
 
