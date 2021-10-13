@@ -103,7 +103,7 @@ body {
 
 .variacion-max-min .percent-up::before {
   content: '';
-  background: url(./assets/images/up.svg);
+  background: url(./assets/images/up.svg) no-repeat;
 }
 
 .variacion-max-min .percent-equal {
