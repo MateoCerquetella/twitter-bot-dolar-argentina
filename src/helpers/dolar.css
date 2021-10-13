@@ -1,0 +1,82 @@
+@font-face {
+  font-family: 'IBMPlexSansCondensed-Bold';
+  src: url('./IBMPlexSansCondensed-Bold.ttf') format('woff');
+}
+
+@font-face {
+  font-family: 'IBMPlexSansCondensed-SemiBold';
+  src: url('./IBMPlexSansCondensed-SemiBold.ttf') format('woff');
+}
+
+body {
+  font-family: 'IBMPlexSansCondensed-Bold';
+}
+
+.col-4 {
+  flex: 0 0 33%;
+  max-width: 33%;
+}
+
+.variacion-max-min {
+  background: #12b34c;
+  margin-bottom: 25px;
+  overflow: hidden;
+  padding: 20px;
+}
+
+.variacion-max-min .date {
+  color: #fff;
+  display: inline-block;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.variacion-max-min .date .date-time {
+  display: inline;
+  font-size: 18px;
+  font-weight: 500;
+  width: 100%;
+}
+
+.variacion-max-min .title {
+  /* float: right; */
+  font-size: 44px;
+}
+
+.variacion-max-min .percent-content {
+  display: inline-block;
+  float: left;
+  width: 33%;
+}
+
+.variacion-max-min .first,
+.variacion-max-min .second {
+  color: #fff;
+  float: left;
+  font-family: 'IBMPlexSansCondensed-Bold';
+  margin-left: 3%;
+  width: 30%;
+}
+
+.variacion-max-min .description {
+  color: #fff;
+  display: inherit;
+  font-family: 'IBMPlexSansCondensed-SemiBold';
+  font-size: 16px;
+  font-weight: 500;
+  /* margin-bottom: 5px; */
+  text-transform: capitalize;
+}
+
+.variacion-max-min .percent-variation {
+  color: #7dff3d;
+  font-size: 39px;
+}
+
+.variacion-max-min .first .value,
+.variacion-max-min .second .value {
+  font-size: 39px;
+  font-weight: 700;
+}
