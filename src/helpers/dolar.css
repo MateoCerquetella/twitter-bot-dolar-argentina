@@ -18,10 +18,11 @@ body {
 }
 
 .variacion-max-min {
-  background: #12b34c;
+  background: #002040;
   margin-bottom: 25px;
   overflow: hidden;
   padding: 20px;
+  border-radius: 5px;
 }
 
 .variacion-max-min .date {
@@ -38,11 +39,12 @@ body {
   font-size: 18px;
   font-weight: 500;
   width: 100%;
+  vertical-align: sub;
 }
 
 .variacion-max-min .title {
-  /* float: right; */
-  font-size: 44px;
+  float: right;
+  font-size: 25px;
 }
 
 .variacion-max-min .percent-content {
@@ -66,12 +68,11 @@ body {
   font-family: 'IBMPlexSansCondensed-SemiBold';
   font-size: 16px;
   font-weight: 500;
-  /* margin-bottom: 5px; */
   text-transform: capitalize;
 }
 
 .variacion-max-min .percent-variation {
-  color: #7dff3d;
+  color: #4ccc3f;
   font-size: 39px;
 }
 
