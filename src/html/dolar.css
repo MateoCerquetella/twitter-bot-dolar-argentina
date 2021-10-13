@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'IBMPlexSansCondensed-Bold';
-  src: url('./IBMPlexSansCondensed-Bold.ttf') format('woff');
+  src: url('./assets/fonts/IBMPlexSansCondensed-Bold.ttf') format('woff');
 }
 
 @font-face {
   font-family: 'IBMPlexSansCondensed-SemiBold';
-  src: url('./IBMPlexSansCondensed-SemiBold.ttf') format('woff');
+  src: url('./assets/fonts/IBMPlexSansCondensed-SemiBold.ttf') format('woff');
 }
 
 body {
@@ -44,12 +44,15 @@ body {
 
 .variacion-max-min .title {
   float: right;
-  font-size: 25px;
+  font-size: 30px;
+  padding-right: 33px;
 }
 
 .variacion-max-min .percent-content {
   display: inline-block;
   float: left;
+
+  text-align: center;
   width: 33%;
 }
 
@@ -69,11 +72,42 @@ body {
   font-size: 16px;
   font-weight: 500;
   text-transform: capitalize;
+  text-align: left;
 }
 
 .variacion-max-min .percent-variation {
-  color: #4ccc3f;
   font-size: 39px;
+}
+
+.variacion-max-min .percent-up {
+  color: #4ccc3f;
+}
+
+.variacion-max-min .percent-up::before {
+  content: '';
+  background: url(./assets/images/up.svg);
+  background-size: cover;
+  position: absolute;
+  width: 27px;
+  height: 27px;
+  margin-left: -29px;
+  margin-top: 12px;
+}
+
+.variacion-max-min .percent-equal {
+  color: #0289cb;
+}
+
+.variacion-max-min .percent-equal::before {
+  background: url(./assets/images/equal.svg) no-repeat;
+}
+
+.variacion-max-min .percent-down {
+  color: #d91f26;
+}
+
+.variacion-max-min .percent-down::before {
+  background: url(./assets/images/down.svg) no-repeat;
 }
 
 .variacion-max-min .first .value,
