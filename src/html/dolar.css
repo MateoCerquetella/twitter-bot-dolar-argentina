@@ -44,14 +44,13 @@ body {
 
 .variacion-max-min .title {
   float: right;
-  font-size: 30px;
+  font-size: 33px;
   padding-right: 33px;
 }
 
 .variacion-max-min .percent-content {
   display: inline-block;
   float: left;
-
   text-align: center;
   width: 33%;
 }
@@ -99,7 +98,14 @@ body {
 }
 
 .variacion-max-min .percent-equal::before {
+  content: '';
   background: url(./assets/images/equal.svg) no-repeat;
+  background-size: cover;
+  position: absolute;
+  width: 27px;
+  height: 27px;
+  margin-left: -29px;
+  margin-top: 12px;
 }
 
 .variacion-max-min .percent-down {
@@ -107,7 +113,14 @@ body {
 }
 
 .variacion-max-min .percent-down::before {
+  content: '';
   background: url(./assets/images/down.svg) no-repeat;
+  background-size: cover;
+  position: absolute;
+  width: 27px;
+  height: 27px;
+  margin-left: -29px;
+  margin-top: 12px;
 }
 
 .variacion-max-min .first .value,
