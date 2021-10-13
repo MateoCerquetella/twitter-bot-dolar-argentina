@@ -8,6 +8,16 @@
   src: url('./assets/fonts/IBMPlexSansCondensed-SemiBold.ttf') format('woff');
 }
 
+:root {
+  --main: #0289cb;
+  --secondary: #4ccc3f;
+  --white: #fff;
+  --background: #002040;
+  --up: #4ccc3f;
+  --equal: #0289cb;
+  --down: #d91f26;
+}
+
 body {
   font-family: 'IBMPlexSansCondensed-Bold';
 }
@@ -18,7 +28,7 @@ body {
 }
 
 .variacion-max-min {
-  background: #002040;
+  background: var(--background);
   margin-bottom: 25px;
   overflow: hidden;
   padding: 20px;
@@ -26,7 +36,7 @@ body {
 }
 
 .variacion-max-min .date {
-  color: #fff;
+  color: var(--white);
   display: inline-block;
   font-size: 18px;
   font-weight: 500;
@@ -57,7 +67,7 @@ body {
 
 .variacion-max-min .first,
 .variacion-max-min .second {
-  color: #fff;
+  color: var(--white);
   float: left;
   font-family: 'IBMPlexSansCondensed-Bold';
   margin-left: 3%;
@@ -65,7 +75,7 @@ body {
 }
 
 .variacion-max-min .description {
-  color: #fff;
+  color: var(--white);
   display: inherit;
   font-family: 'IBMPlexSansCondensed-SemiBold';
   font-size: 16px;
@@ -79,7 +89,7 @@ body {
 }
 
 .variacion-max-min .percent-up {
-  color: #4ccc3f;
+  color: var(--secondary);
 }
 
 .variacion-max-min .percent-up::before {
@@ -94,7 +104,7 @@ body {
 }
 
 .variacion-max-min .percent-equal {
-  color: #0289cb;
+  color: var(--equal);
 }
 
 .variacion-max-min .percent-equal::before {
@@ -109,7 +119,7 @@ body {
 }
 
 .variacion-max-min .percent-down {
-  color: #d91f26;
+  color: var(--down);
 }
 
 .variacion-max-min .percent-down::before {
