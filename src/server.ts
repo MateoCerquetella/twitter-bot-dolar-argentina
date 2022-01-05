@@ -15,7 +15,6 @@ class Server {
   public main(): void {
     process.title = 'node-twitter-bot';
     console.log(`Started ${process.title} with PID ${process.pid}`);
-    this.getDolarAndPost();
     this.schedulerJob();
   }
 
