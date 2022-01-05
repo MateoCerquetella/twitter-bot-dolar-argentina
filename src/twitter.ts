@@ -1,6 +1,8 @@
-import Twit from 'twit';
 import dotenv from 'dotenv';
+import Twit from 'twit';
+
 import { getNow } from './helpers/helpers';
+
 dotenv.config();
 
 class Twitter {
@@ -23,10 +25,10 @@ class Twitter {
   public postToTwitter(
     dolarLabel: string,
     dolarType: string,
-    dolarPrice: number
+    dolarPrice: string
   ): void {
     this.Twit.post('statuses/update', { status: dolarLabel }, function () {
-      console.log(`Twitted dolar ${dolarType}
+      console.log(`Twitted ${dolarType}
               price: $${dolarPrice}
               date: ${getNow()}`);
     });
