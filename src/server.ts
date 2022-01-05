@@ -1,15 +1,14 @@
-import { getRandomText, getScheduleRule } from './helpers/helpers';
-
-import { ScheduleRule } from './model/schedule.model';
-import { dolar } from './dolar';
-import { follow } from './follow';
 import schedule from 'node-schedule';
+
+import { dolar } from './dolar';
+import { getScheduleRule } from './helpers/helpers';
+import { ScheduleRule } from './model/schedule.model';
 import { twitter } from './twitter';
 
 class Server {
   scheduleTwit: ScheduleRule = {
     days: [new schedule.Range(1, 5)],
-    hours: [11, 15, 19],
+    hours: [11, 18],
     minute: 0
   };
 
@@ -25,17 +24,23 @@ class Server {
   }
 
   private async getDolarAndPost(): Promise<void> {
-    const DOLAR_ARRAY = await dolar.getApiDolar();
+    const DOLAR_ARRAY = await dolar.retrieveDolar();
     if (!DOLAR_ARRAY) return;
 
-    // Twit dolar
+    // Twit Dolar
     DOLAR_ARRAY.forEach((dolar) => {
-      const DOLAR_LABEL = getRandomText(dolar.dolarType, dolar.dolarValue);
-      twitter.postToTwitter(DOLAR_LABEL, dolar.dolarType, dolar.dolarValue);
+      const { nombre, venta } = dolar.casa;
+      const DOLAR_TYPE = nombre.toLowerCase();
+
+      twitter.postToTwitter(
+        `Un ${DOLAR_TYPE} está a $${venta} pesos argentinos`,
+        DOLAR_TYPE,
+        venta
+      );
     });
 
     // Follow users
-    follow.followUsers();
+    // follow.followUsers();
   }
 }
 

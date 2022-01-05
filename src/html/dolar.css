@@ -1,0 +1,131 @@
+@font-face {
+  font-family: 'IBMPlexSansCondensed-Bold';
+  src: url('./assets/fonts/IBMPlexSansCondensed-Bold.ttf') format('woff');
+}
+
+@font-face {
+  font-family: 'IBMPlexSansCondensed-SemiBold';
+  src: url('./assets/fonts/IBMPlexSansCondensed-SemiBold.ttf') format('woff');
+}
+
+:root {
+  --main: #0289cb;
+  --secondary: #4ccc3f;
+  --white: #fff;
+  --background: #002040;
+  --up: #4ccc3f;
+  --equal: #0289cb;
+  --down: #d91f26;
+}
+
+body {
+  font-family: 'IBMPlexSansCondensed-Bold';
+}
+
+.col-4 {
+  flex: 0 0 33%;
+  max-width: 33%;
+}
+
+.variacion-max-min {
+  background: var(--background);
+  margin-bottom: 25px;
+  overflow: hidden;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.variacion-max-min .date {
+  color: var(--white);
+  display: inline-block;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.variacion-max-min .date .date-time {
+  display: inline;
+  font-size: 18px;
+  font-weight: 500;
+  width: 100%;
+  vertical-align: sub;
+}
+
+.variacion-max-min .title {
+  float: right;
+  font-size: 33px;
+  padding-right: 33px;
+}
+
+.variacion-max-min .percent-content {
+  display: inline-block;
+  float: left;
+  text-align: center;
+  width: 33%;
+}
+
+.variacion-max-min .first,
+.variacion-max-min .second {
+  color: var(--white);
+  float: left;
+  font-family: 'IBMPlexSansCondensed-Bold';
+  margin-left: 3%;
+  width: 30%;
+}
+
+.variacion-max-min .description {
+  color: var(--white);
+  display: inherit;
+  font-family: 'IBMPlexSansCondensed-SemiBold';
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: capitalize;
+  text-align: left;
+}
+
+.variacion-max-min .percent-variation {
+  font-size: 39px;
+}
+
+.variacion-max-min .icon::before {
+  background-size: cover;
+  position: absolute;
+  width: 27px;
+  height: 27px;
+  margin-left: -29px;
+  margin-top: 12px;
+}
+
+.variacion-max-min .percent-up {
+  color: var(--secondary);
+}
+
+.variacion-max-min .percent-up::before {
+  content: '';
+  background: url(./assets/images/up.svg) no-repeat;
+}
+
+.variacion-max-min .percent-equal {
+  color: var(--equal);
+}
+
+.variacion-max-min .percent-equal::before {
+  content: '';
+  background: url(./assets/images/equal.svg) no-repeat;
+}
+
+.variacion-max-min .percent-down {
+  color: var(--down);
+}
+
+.variacion-max-min .percent-down::before {
+  content: '';
+  background: url(./assets/images/down.svg) no-repeat;
+}
+
+.variacion-max-min .first .value,
+.variacion-max-min .second .value {
+  font-size: 39px;
+  font-weight: 700;
+}

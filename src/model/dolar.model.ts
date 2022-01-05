@@ -1,16 +1,16 @@
-export type DolarResponse = {
-  oficial: Dolar;
-  blue: Dolar;
-  oficial_euro: Dolar;
-  blue_euro: Dolar;
-  last_update: Date;
-};
+export interface DolarResponse {
+  casa: Dolar;
+}
 
-export type Dolar = {
-  value_avg: number;
-  value_sell: number;
-  value_buy: number;
-};
+export interface Dolar {
+  compra: string;
+  venta: string;
+  agencia: string;
+  nombre: string;
+  variacion: string;
+  ventaCero: string;
+  decimales: string;
+}
 
 export type DolarTwit = {
   dolarType: string;
@@ -18,7 +18,7 @@ export type DolarTwit = {
 };
 
 export enum DolarType {
-  oficial = 'oficial',
-  blue = 'blue',
-  solidario = 'solidario',
+  blue = 'dolar blue',
+  turista = 'dolar turista',
+  bolsa = 'dolar bolsa'
 }
