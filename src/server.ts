@@ -33,7 +33,7 @@ class Server {
       const DOLAR_TYPE = nombre.toLowerCase();
 
       twitter.postToTwitter(
-        `Un ${DOLAR_TYPE} está a $${venta} pesos argentinos`,
+        `Un ${DOLAR_TYPE} está $${venta} pesos argentinos`,
         DOLAR_TYPE,
         venta
       );
