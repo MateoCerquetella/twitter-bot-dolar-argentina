@@ -36,7 +36,7 @@ class Server {
       twitter.postToTwitter(
         `Un ${DOLAR_TYPE} está $${DOLAR_VENTA} pesos argentinos`,
         DOLAR_TYPE,
-        venta
+        DOLAR_VENTA
       );
     });
 
