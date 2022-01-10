@@ -31,9 +31,10 @@ class Server {
     DOLAR_ARRAY.forEach((dolar) => {
       const { nombre, venta } = dolar.casa;
       const DOLAR_TYPE = nombre.toLowerCase();
+      const DOLAR_VENTA = parseFloat(venta).toFixed(2).replace('.', ',');
 
       twitter.postToTwitter(
-        `Un ${DOLAR_TYPE} está $${venta} pesos argentinos`,
+        `Un ${DOLAR_TYPE} está $${DOLAR_VENTA} pesos argentinos`,
         DOLAR_TYPE,
         venta
       );
