@@ -1,4 +1,4 @@
-# 💵 Dolar-Simple-Argentina | 2019-2020
+# 💵 Twitter Bot Dolar Argentina
 
 ### 💰 Install
 
