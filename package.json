@@ -10,7 +10,8 @@
     "prod": "tsc --project ./ && pm2 start dist/server.js -n DolarTwitter",
     "start": "node dist/server.js",
     "build": "tsc --project ./",
-    "dev": "ts-node src/server.ts"
+    "dev": "ts-node src/server.ts",
+    "deploy": "railway login --browserless && railway up"
   },
   "author": "",
   "license": "ISC",
